@@ -38,11 +38,12 @@ namespace Subtitles.Services
                 }
 
                 //now s contains sequence number
-
                 var phrase = new Phrase();
                 phrase.SequenceNumber = Convert.ToInt32(s);
 
-                s = await subtitles.ReadLineAsync(); // skip timings
+                // time
+                s = await subtitles.ReadLineAsync();
+                phrase.Time = s;
 
                 // read phrase lines
                 sb.Clear();

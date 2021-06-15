@@ -15,6 +15,8 @@ namespace Subtitles.Models
 
         public int SequenceNumber { get; set; }
 
+        public string Time { get; set; }
+
         public string Content { get; set; }
 
         public int MovieId { get; set; }
