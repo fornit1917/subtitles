@@ -1,0 +1,63 @@
+﻿@model SubtitlesEditorViewModel
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="~/js/subtitles-editor/app.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            initSubtitlesEditor(@Model.Id);
+        })()
+    </script>
+}
+
+<h1>@Model.Name</h1>
+<div id="app">
+    <span v-if="isLoading">Loading...</span>
+    <div v-if="!isLoading">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Phrase</th>
+                    <th>Translations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="phrase in phrases">
+                    <td v-html="phrase.content"></td>
+                    <td>
+                        <table class="table">
+                            <tr v-for="translation in phrase.phraseTranslations">
+                                <td v-html="translation.content"></td>
+                                <td class="translation-rating">
+                                    <span class="translation-rating__value">{{ translation.votesCount }}</span>
+                                    &nbsp;
+                                    <button class="btn btn-sm btn-success translation-rating__btn" v-bind:data-id="translation.id" v-on:click="votePlus">+</button>
+                                    <button class="btn btn-sm btn-warning translation-rating__btn" v-bind:data-id="translation.id" v-on:click="voteMinus">-</button>
+                                </td>
+                            </tr>
+                        </table>
+                       
+                        <div>
+                            <textarea 
+                                v-bind:id="'new-translation-' + phrase.id"
+                                class="form-control form-control-sm"
+                                rows="2"
+                            >
+                            </textarea>
+                        </div>
+                        <div class="translation-add">
+                            <button class="btn btn-success btn-sm" v-bind:data-id="phrase.id" v-on:click="addTranslation">Add</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <button class="btn btn-light" v-bind:disabled="!hasPrev" v-on:click="prevPage">Prev</button>
+            &nbsp;
+            <button class="btn btn-light" v-bind:disabled="!hasNext" v-on:click="nextPage">Next</button>
+        </div>
+    </div>
+</div>
+

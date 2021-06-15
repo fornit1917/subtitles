@@ -1,0 +1,50 @@
+﻿@model MainPageViewModel
+@using Subtitles.Models
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="text-center">
+    <div class="add-subtitles-form">
+        <p class="add-subtitles-form__title">Add new movie to translation</p>
+        <form method="post" asp-controller="Home" asp-action="UploadSubtitles" enctype="multipart/form-data">
+            <div class="add-subtitles-form__row">
+                <input type="text" class="form-control" placeholder="Movie title" name="name">
+            </div>
+            <div class="add-subtitles-form__row">
+                <input type="file" class="form-control-file" id="subtitles-file" name="subtitlesFile">
+            </div>
+            <div class="add-subtitles-form__row">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+            @*<div class="form-row">
+                <div class="col">
+
+                </div>
+                <div class="col">
+                    
+                </div>
+                <div class="col">
+                    
+                </div>
+            </div>*@
+
+        </form>
+    </div>
+    <div class="existed-movies">
+        @if (Model.Movies != null && Model.Movies.Count > 0)
+        {
+            <p class="existed-movies__title">Or join to existing translation</p>
+            <ul class="existed-movies__items">
+                @foreach (Movie movie in Model.Movies)
+                {
+                    <li class="existed-movies__item">
+                        <a asp-controller="Home" asp-action="Subtitles" asp-route-id="@movie.Id">@movie.Name</a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+</div>
