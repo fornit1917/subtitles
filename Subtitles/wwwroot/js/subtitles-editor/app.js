@@ -27,9 +27,7 @@
                 var textarea = document.getElementById(`new-translation-${id}`);
                 var content = textarea.value;
                 addTranslation(id, content).then(function (newTranslation) {
-                    newTranslation.content = newTranslation.content.replace(/\n/g, "<br/>");
-                    app.phrases.find(x => x.id == id).phraseTranslations.push(newTranslation);
-                    app.translationsMap[newTranslation.id] = newTranslation;
+                    onTranslationAdded(newTranslation);
                     textarea.value = "";
                 });
             },
@@ -49,7 +47,6 @@
     // helpers
 
     function onLoaded(data) {
-
         app.translationsMap = {};
         for (var i = 0; i < data.items.length; i++) {
             data.items[i].content = data.items[i].content.replace(/\n/g, "<br/>");
@@ -66,14 +63,37 @@
         app.isLoading = false;
     }
 
+    function onTranslationAdded(newTranslation) {
+        newTranslation.content = newTranslation.content.replace(/\n/g, "<br/>");
+        var phrase = app.phrases.find(x => x.id == newTranslation.phraseId);
+        if (!phrase) {
+            return;
+        }
+        phrase.phraseTranslations.push(newTranslation);
+        app.translationsMap[newTranslation.id] = newTranslation;
+    }
+
     function onVotePlus(translationId) {
-        var phraseId = app.translationsMap[translationId].phraseId;
-        app.phrases.find(x=> x.id == phraseId).phraseTranslations.find(x => x.id == translationId).votesCount++;
+        onVoteUpdate(translationId, 1);
     }
 
     function onVoteMinus(translationId) {
-        var phraseId = app.translationsMap[translationId].phraseId;
-        app.phrases.find(x => x.id == phraseId).phraseTranslations.find(x => x.id == translationId).votesCount--;
+        onVoteUpdate(translationId, -1);
+    }
+
+    function onVoteUpdate(translationId, votesDelta) {
+        var phraseId = app.translationsMap[translationId] ? app.translationsMap[translationId].phraseId : null;
+        var phrase = app.phrases.find(x => x.id == phraseId);
+        if (!phrase) {
+            return;
+        }
+
+        var translation = phrase.phraseTranslations.find(x => x.id == translationId);
+        if (!translation) {
+            return;
+        }
+
+        translation.votesCount += votesDelta;
     }
 
     // api
@@ -109,6 +129,13 @@
         });
     }
 
+    // global object for server events handlers
+
+    window.ServerEvents = {
+        onTranslationAdded,
+        onVoteMinus,
+        onVotePlus
+    }
 
     // init app
     getPhrasesWithTranslations(movieId, 0, 100).then(onLoaded)
