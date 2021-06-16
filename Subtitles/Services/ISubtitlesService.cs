@@ -13,6 +13,8 @@ namespace Subtitles.Services
 
         public ValueTask<Movie> GetMovie(int id);
 
+        public Task<Movie> GetMovieByTranslationId(long translationId);
+
         public Task<Movie> AddMovieToTranslation(string name, StreamReader subtitles);
 
         public Task<PageResult<Phrase>> GetPhrasesWithTranslations(int movieId, int skip = 0, int take = 100);

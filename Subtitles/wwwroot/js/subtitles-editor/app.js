@@ -129,16 +129,18 @@
         });
     }
 
-    // global object for server events handlers
+    // ui handlers for server events
 
-    window.ServerEvents = {
+    var handlers = {
         onTranslationAdded,
+        onVotePlus,
         onVoteMinus,
-        onVotePlus
     }
 
     // init app
-    getPhrasesWithTranslations(movieId, 0, 100).then(onLoaded)
+    getPhrasesWithTranslations(movieId, 0, 100).then((data) => {
+        onLoaded(data);
+    });
 }
 
 

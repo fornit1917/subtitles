@@ -96,6 +96,16 @@ namespace Subtitles.Services
             return _db.Movies.FindAsync(id);
         }
 
+        public Task<Movie> GetMovieByTranslationId(long translationId)
+        {
+            return _db.PhraseTranslations
+                .Where(x => x.Id == translationId)
+                .Include(x => x.Phrase)
+                .ThenInclude(x => x.Movie)
+                .Select(x => x.Phrase.Movie)
+                .FirstAsync();
+        }
+
         public async Task<PageResult<Phrase>> GetPhrasesWithTranslations(int movieId, int skip = 0, int take = 100)
         {
             int totalCount = await _db.Phrases.Where(x => x.MovieId == movieId).CountAsync();
@@ -110,7 +120,6 @@ namespace Subtitles.Services
                 .ToArrayAsync();
 
             return new PageResult<Phrase>(phrases, totalCount, skip);
-
         }
     }
 }

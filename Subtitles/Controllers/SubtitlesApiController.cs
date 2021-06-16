@@ -29,23 +29,24 @@ namespace Subtitles.Controllers
 
         [HttpPost]
         [Route("phrases/{phraseId}/translations")]
-        public Task<PhraseTranslation> AddTranslation(int phraseId, [FromBody] CreateTranslationDto data)
+        public async Task<PhraseTranslation> AddTranslation(int phraseId, [FromBody] CreateTranslationDto data)
         {
-            return _subtitlesService.AddTranslation(phraseId, data.Content);
+            PhraseTranslation translation = await _subtitlesService.AddTranslation(phraseId, data.Content);
+            return translation;
         }
 
         [HttpPost]
         [Route("translations/{translationId}/votes/plus")]
-        public Task VotePlus(long translationId)
+        public async Task VotePlus(long translationId)
         {
-            return _subtitlesService.ChangeVotesCount(translationId, 1);
+            await _subtitlesService.ChangeVotesCount(translationId, 1);
         }
 
         [HttpPost]
         [Route("translations/{translationId}/votes/minus")]
-        public Task VoteMinus(long translationId)
+        public async Task VoteMinus(long translationId)
         {
-            return _subtitlesService.ChangeVotesCount(translationId, -1);
+            await _subtitlesService.ChangeVotesCount(translationId, -1);
         }
 
 
