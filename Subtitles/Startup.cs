@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Subtitles.Database;
+using Subtitles.Hubs;
 using Subtitles.Models;
 using Subtitles.Services;
 using System;
@@ -31,6 +32,8 @@ namespace Subtitles
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ISubtitlesService, SubtitlesService>();
+
+            services.AddSignalR();
 
             services.AddControllersWithViews();
         }
@@ -60,6 +63,8 @@ namespace Subtitles
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHub<SubtitlesHub>("/subtitles-hub");
             });
 
             using var scope = app.ApplicationServices.CreateScope();

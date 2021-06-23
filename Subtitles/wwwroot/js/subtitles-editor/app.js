@@ -1,4 +1,7 @@
 ﻿function initSubtitlesEditor(movieId) {
+
+    var serverEventsClient = new ServerEventsClient();
+
     const app = new Vue({
         el: "#app",
         data: {
@@ -108,7 +111,7 @@
     function addTranslation(phraseId, content) {
         return $.ajax({
             type: "POST",
-            url: `/api/subtitles/phrases/${phraseId}/translations`,
+            url: `/api/subtitles/phrases/${phraseId}/translations?clientId=${serverEventsClient.clientId}`,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: JSON.stringify({ content }),
@@ -118,14 +121,14 @@
     function sendVotePlus(translationId) {
         return $.ajax({
             type: "POST",
-            url: `/api/subtitles/translations/${translationId}/votes/plus`
+            url: `/api/subtitles/translations/${translationId}/votes/plus?clientId=${serverEventsClient.clientId}`
         });
     }
 
     function sendVoteMinus(translationId) {
         return $.ajax({
             type: "POST",
-            url: `/api/subtitles/translations/${translationId}/votes/minus`
+            url: `/api/subtitles/translations/${translationId}/votes/minus?clientId=${serverEventsClient.clientId}`
         });
     }
 
@@ -137,9 +140,14 @@
         onVoteMinus,
     }
 
+    window.handlers = handlers;
+
+    
+
     // init app
     getPhrasesWithTranslations(movieId, 0, 100).then((data) => {
         onLoaded(data);
+        serverEventsClient.start(movieId, handlers);
     });
 }
 
